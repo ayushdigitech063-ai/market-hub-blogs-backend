@@ -1,0 +1,11 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="48" height="48" rx="12" fill="url(#logo_compact_grad)" />
+  <path d="M15 17L24 11.5L33 17V31L24 36.5L15 31V17Z" stroke="white" stroke-width="2.8" stroke-linejoin="round" />
+  <circle cx="24" cy="24" r="4.5" fill="#FF6A00" />
+  <defs>
+    <linearGradient id="logo_compact_grad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#062B63" />
+      <stop offset="1" stop-color="#07448D" />
+    </linearGradient>
+  </defs>
+</svg>

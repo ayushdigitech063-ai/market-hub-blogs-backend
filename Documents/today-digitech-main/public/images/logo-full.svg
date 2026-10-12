@@ -1,0 +1,13 @@
+<svg width="220" height="48" viewBox="0 0 220 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="44" height="44" rx="12" fill="url(#logo_grad)" />
+  <path d="M14 16L22 11L30 16V28L22 33L14 28V16Z" stroke="white" stroke-width="2.5" stroke-linejoin="round" />
+  <circle cx="22" cy="22" r="4" fill="#FF6A00" />
+  <text x="56" y="27" font-family="'Inter', sans-serif" font-weight="900" font-size="20" fill="#062B63" letter-spacing="-0.5px">TODAY <tspan fill="#FF6A00">DIGITECH</tspan></text>
+  <text x="56" y="38" font-family="'Inter', sans-serif" font-weight="700" font-size="9" fill="#64748B" letter-spacing="1.5px">DIGITAL SOLUTIONS</text>
+  <defs>
+    <linearGradient id="logo_grad" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#062B63" />
+      <stop offset="1" stop-color="#07448D" />
+    </linearGradient>
+  </defs>
+</svg>
