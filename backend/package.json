@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "build": "echo 'No build required for Node.js'",
-    "test": "echo \"Error: no test specified\" && exit 1"
+     "build": "esbuild server.js --bundle --platform=node --target=node20 --packages=external --outfile=dist/server.js",   
+       "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
@@ -20,5 +20,8 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.11.0",
     "multer": "^2.4.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
   }
 }
