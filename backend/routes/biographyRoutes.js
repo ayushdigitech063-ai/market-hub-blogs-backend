@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Biography = require('../models/Biography');
 
-// 1. ADD POST
 router.post('/add', async (req, res) => {
   try {
     const newBio = new Biography(req.body);
@@ -13,7 +12,7 @@ router.post('/add', async (req, res) => {
   }
 });
 
-// 2. GET ALL POSTS
+
 router.get('/', async (req, res) => {
   try {
     const bios = await Biography.find();
@@ -23,7 +22,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// 3. UPDATE POST (PUT)
+
 router.put('/update/:id', async (req, res) => {
   try {
     const updatedPost = await Biography.findByIdAndUpdate(
@@ -45,7 +44,7 @@ router.put('/update/:id', async (req, res) => {
   }
 });
 
-// 4. DELETE POST (DELETE)
+
 router.delete('/delete/:id', async (req, res) => {
   try {
     const deletedPost = await Biography.findByIdAndDelete(req.params.id);

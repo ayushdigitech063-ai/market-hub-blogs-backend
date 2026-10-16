@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Company = require('../models/Company');
 
-// GET: Saari companies
+
 router.get('/', async (req, res) => {
   try {
     const companies = await Company.find();
@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// POST: Add new company
+
 router.post('/', async (req, res) => {
   try {
     const newCompany = new Company(req.body);
@@ -23,7 +23,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT: company update karo (sirf wahi fields bhejo jo badalni hain)
+
 router.put('/:slug', async (req, res) => {
   try {
     const updated = await Company.findOneAndUpdate(
@@ -38,7 +38,7 @@ router.put('/:slug', async (req, res) => {
   }
 });
 
-// DELETE: company delete karo
+
 router.delete('/:slug', async (req, res) => {
   try {
     const deleted = await Company.findOneAndDelete({ slug: req.params.slug });

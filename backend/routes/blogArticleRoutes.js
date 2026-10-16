@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const BlogArticle = require('../models/BlogArticle');
 
-// GET: saare articles (?authorId=amish-tripathi se filter bhi ho sakta hai)
+
 router.get('/', async (req, res) => {
   try {
     const filter = req.query.authorId ? { authorId: req.query.authorId } : {};
@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET: ek article slug se
+
 router.get('/slug/:slug', async (req, res) => {
   try {
     const article = await BlogArticle.findOne({ slug: req.params.slug });
@@ -24,7 +24,6 @@ router.get('/slug/:slug', async (req, res) => {
   }
 });
 
-// POST: article add karo
 router.post('/', async (req, res) => {
   try {
     const saved = Array.isArray(req.body)
@@ -36,7 +35,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT: article update karo
+
 router.put('/slug/:slug', async (req, res) => {
   try {
     const updated = await BlogArticle.findOneAndUpdate(
@@ -51,7 +50,7 @@ router.put('/slug/:slug', async (req, res) => {
   }
 });
 
-// DELETE: article delete karo
+
 router.delete('/slug/:slug', async (req, res) => {
   try {
     const deleted = await BlogArticle.findOneAndDelete({ slug: req.params.slug });

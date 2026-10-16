@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Article = require('../models/Article');
 
-// GET: saare articles
+
 router.get('/', async (req, res) => {
   try {
     const articles = await Article.find().sort({ id: 1 });
@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET: ek article id se
+
 router.get('/:id', async (req, res) => {
   try {
     const article = await Article.findOne({ id: Number(req.params.id) });
@@ -23,7 +23,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST: ek ya multiple articles add karo
+
 router.post('/', async (req, res) => {
   try {
     const saved = Array.isArray(req.body)
@@ -35,7 +35,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT: article update karo (sirf wahi fields bhejo jo badalni hain)
+
 router.put('/:id', async (req, res) => {
   try {
     const updated = await Article.findOneAndUpdate(
@@ -49,7 +49,7 @@ router.put('/:id', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-// Get single article by id or slug
+
 router.get('/:id', async (req, res) => {
   try {
     const query = req.params.id;
@@ -66,7 +66,7 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
-// DELETE: article delete karo
+
 router.delete('/:id', async (req, res) => {
   try {
     const deleted = await Article.findOneAndDelete({ id: Number(req.params.id) });

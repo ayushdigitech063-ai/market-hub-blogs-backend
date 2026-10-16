@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Admin = require("../models/Admin");
 
-// Yahan makeToken mein name aur email add kar diye hain taaki token payload mein show ho
+
 const makeToken = (admin) =>
   jwt.sign(
     { 
@@ -18,7 +18,7 @@ const makeToken = (admin) =>
 
 const safeAdmin = (a) => ({ id: a._id, name: a.name, email: a.email });
 
-// POST /api/auth/register
+
 exports.register = async (req, res) => {
   try {
     const { name, email, password, secretKey } = req.body;
@@ -26,7 +26,7 @@ exports.register = async (req, res) => {
     if (!name || !email || !password || !secretKey) {
       return res.status(400).json({ error: "Saari fields bharna zaroori hai." });
     }
-    // Sirf wahi register kar sakta hai jiske paas secret key ho
+
     if (secretKey !== process.env.ADMIN_REGISTER_KEY) {
       return res.status(403).json({ error: "Secret key galat hai." });
     }
@@ -47,7 +47,7 @@ exports.register = async (req, res) => {
   }
 };
 
-// POST /api/auth/login
+
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -68,7 +68,7 @@ exports.login = async (req, res) => {
   }
 };
 
-// GET /api/auth/me  (token check)
+
 exports.me = async (req, res) => {
   res.json({ admin: safeAdmin(req.admin) });
 };

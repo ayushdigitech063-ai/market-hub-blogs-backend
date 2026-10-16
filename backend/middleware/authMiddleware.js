@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const Admin = require("../models/Admin");
 
-// Jis route par lagana ho, wahan sirf logged-in admin hi ja payega
+
 module.exports = async function protect(req, res, next) {
   try {
     const header = req.headers.authorization || "";

@@ -1,6 +1,6 @@
 const Brand = require("../models/Brand");
 
-// Home page: featured cards
+
 exports.getFeatured = async (req, res) => {
   try {
     const items = await Brand.find({ featured: true }).sort({ order: 1 });
@@ -10,7 +10,6 @@ exports.getFeatured = async (req, res) => {
   }
 };
 
-// Saare products (optional ?brand=Jio)
 exports.getAll = async (req, res) => {
   try {
     const filter = req.query.brand ? { brand: req.query.brand } : {};
@@ -21,7 +20,7 @@ exports.getAll = async (req, res) => {
   }
 };
 
-// Single detail page + related products
+
 exports.getBySlug = async (req, res) => {
   try {
     const item = await Brand.findOne({ slug: req.params.slug });
@@ -38,7 +37,7 @@ exports.getBySlug = async (req, res) => {
   }
 };
 
-// Admin: create / update / delete
+
 exports.create = async (req, res) => {
   try {
     res.status(201).json(await Brand.create(req.body));

@@ -4,24 +4,24 @@ const mongoose = require("mongoose");
 
 const brandSchema = new mongoose.Schema(
   {
-    // ----- purane fields (jaise the waise) -----
-    id: Number,                       // purana id (135, 141...)
+
+    id: Number,                   
     slug: { type: String, required: true, unique: true },
-    name: String,                     // product name
-    articleTitle: String,             // jio wale articles ke liye
-    brand: String,                    // Jio / Vivo / Apple
+    name: String,               
+    articleTitle: String,     
+    brand: String,           
     category: String,
     subCategory: String,
     description: String,
     shortDescription: String,
-    blog: String,                     // pura blog content
+    blog: String,                    
     articleContent: String,
     features: [String],
     imageUrl: String,
-    featured: { type: Boolean, default: false },  // home page pe dikhana hai ya nahi
+    featured: { type: Boolean, default: false }, 
     order: { type: Number, default: 0 },
 
-    // ----- naye SEO editor ke fields -----
+
     contentHtml: { type: String, default: "" },
     focusKeyword: { type: String, default: "" },
     secondaryKeywords: { type: [String], default: [] },

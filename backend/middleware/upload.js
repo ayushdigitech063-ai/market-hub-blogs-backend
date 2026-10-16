@@ -1,26 +1,39 @@
+
+
 const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
-const crypto = require("crypto");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("../config/cloudinary");
 
-const uploadDir = path.join(__dirname, "..", "uploads");
-fs.mkdirSync(uploadDir, { recursive: true });
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: async (req, file) => {
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    cb(null, Date.now() + "-" + crypto.randomBytes(6).toString("hex") + ext);
+    if (!allowedTypes.includes(file.mimetype)) {
+      throw new Error("Sirf JPG, PNG, WEBP ya GIF image allowed hai.");
+    }
+
+    return {
+      folder: "market-hub",
+      resource_type: "image",
+      allowed_formats: ["jpg", "jpeg", "png", "webp", "gif"],
+      public_id: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
+    };
   },
 });
 
 const fileFilter = (req, file, cb) => {
-  if (/^image\/(jpeg|png|webp|gif)$/.test(file.mimetype)) cb(null, true);
-  else cb(new Error("Sirf JPG, PNG, WEBP ya GIF image allowed hai."));
+  const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+
+  if (allowedTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error("Sirf JPG, PNG, WEBP ya GIF image allowed hai."));
+  }
 };
 
 module.exports = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  limits: { fileSize: 5 * 1024 * 1024 },
 });

@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 
 const biographySchema = new mongoose.Schema({
-  // ----- purane fields (jaise the waise) -----
+
   name: { type: String, required: true },
   role: { type: String, required: true },
   company: { type: String, required: true },
@@ -13,15 +13,15 @@ const biographySchema = new mongoose.Schema({
   birthplace: { type: String },
   slug: { type: String, required: true, unique: true },
 
-  // ----- dashboard ke purane form ke fields jo schema me nahi the -----
-  type: { type: String, default: "" },        // ceo / sports / entrepreneur / actor
+  
+  type: { type: String, default: "" },        
   shortBio: { type: String, default: "" },
   linkedin: { type: String, default: "" },
   twitter: { type: String, default: "" },
   instagram: { type: String, default: "" },
   website: { type: String, default: "" },
 
-  // ----- naye SEO editor ke fields -----
+
   contentHtml: { type: String, default: "" },
   focusKeyword: { type: String, default: "" },
   secondaryKeywords: { type: [String], default: [] },
