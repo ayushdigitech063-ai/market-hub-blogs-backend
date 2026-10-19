@@ -6,7 +6,7 @@ const protect = require("../middleware/authMiddleware");
 const upload = require("../middleware/upload");
 
 
-router.post("/", protect, (req, res) => {
+router.post("/", (req, res) => {
   upload.single("image")(req, res, (err) => {
     if (err) {
       const msg =

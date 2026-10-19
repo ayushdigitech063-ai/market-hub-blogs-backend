@@ -1,0 +1,143 @@
+const mongoose = require("mongoose");
+const sanitizeHtml = require("sanitize-html");
+const Submission = require("../models/Submission");
+
+const TYPES = [
+  "biographies", "brands", "slidingCompanies", "latestArticles",
+  "articles", "blogArticles", "companies",
+];
+
+// Public user ka HTML hai, isliye sanitize karke hi save hota hai (XSS se bachne ke liye)
+const CLEAN = {
+  allowedTags: [
+    "h1", "h2", "h3", "h4", "h5", "h6", "p", "br", "hr", "strong", "b", "em", "i", "u", "s",
+    "strike", "a", "ul", "ol", "li", "blockquote", "pre", "code", "span", "div", "img",
+    "iframe", "table", "thead", "tbody", "tr", "th", "td", "figure", "figcaption", "sub", "sup",
+  ],
+  allowedAttributes: {
+    "*": ["class", "style"],
+    a: ["href", "target", "rel"],
+    img: ["src", "alt", "width", "height"],
+    iframe: ["src", "width", "height", "allowfullscreen", "frameborder"],
+    td: ["colspan", "rowspan"],
+    th: ["colspan", "rowspan"],
+  },
+  allowedStyles: {
+    "*": {
+      color: [/^[#(),.%\w\s-]+$/],
+      "background-color": [/^[#(),.%\w\s-]+$/],
+      "text-align": [/^(left|right|center|justify)$/],
+    },
+  },
+  allowedIframeHostnames: ["www.youtube.com", "www.youtube-nocookie.com", "player.vimeo.com"],
+  allowedSchemes: ["http", "https", "mailto", "tel"],
+  transformTags: {
+    a: sanitizeHtml.simpleTransform("a", { rel: "noopener noreferrer" }),
+  },
+};
+
+const validId = (id) => mongoose.Types.ObjectId.isValid(id);
+
+// POST /api/submissions (public)
+exports.createSubmission = async (req, res) => {
+  try {
+    const { name, email, postType, form } = req.body || {};
+    if (!String(name || "").trim() || !/^\S+@\S+\.\S+$/.test(String(email || ""))) {
+      return res.status(400).json({ error: "Please enter a valid name and email." });
+    }
+    if (!TYPES.includes(postType)) {
+      return res.status(400).json({ error: "Invalid post category." });
+    }
+    if (!form || typeof form !== "object" || Array.isArray(form)) {
+      return res.status(400).json({ error: "Blog data is missing." });
+    }
+
+    const clean = { ...form };
+    clean.title = String(clean.title || "").trim();
+    clean.category = String(clean.category || "").trim();
+    clean.contentHtml = sanitizeHtml(String(clean.contentHtml || ""), CLEAN);
+
+    if (!clean.title || !clean.category || !clean.contentHtml.trim()) {
+      return res.status(400).json({ error: "Title, category and content are required." });
+    }
+
+    const sub = await Submission.create({
+      name,
+      email,
+      postType,
+      title: clean.title,
+      category: clean.category,
+      form: clean,
+    });
+    res.status(201).json({ id: sub._id, status: sub.status });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not submit blog." });
+  }
+};
+
+// GET /api/submissions/:id (public - sirf status)
+exports.getSubmissionStatus = async (req, res) => {
+  try {
+    if (!validId(req.params.id)) return res.status(404).json({ error: "Not found" });
+    const sub = await Submission.findById(req.params.id).select("title status");
+    if (!sub) return res.status(404).json({ error: "Not found" });
+    res.json({ title: sub.title, status: sub.status });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+// GET /api/submissions?status=pending|approved|rejected (admin) - status na do to sab
+exports.listSubmissions = async (req, res) => {
+  try {
+    const filter = ["pending", "approved", "rejected"].includes(req.query.status)
+      ? { status: req.query.status }
+      : {};
+    res.json(await Submission.find(filter).sort({ createdAt: -1 }));
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+// GET /api/submissions/count (admin) - sidebar badge ke liye
+exports.getPendingCount = async (req, res) => {
+  try {
+    res.json({ pending: await Submission.countDocuments({ status: "pending" }) });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+// PUT /api/submissions/:id/approve (admin)
+// Blog admin panel pehle hi sahi collection me save kar chuka hota hai, yaha sirf status badalta hai
+exports.approveSubmission = async (req, res) => {
+  try {
+    if (!validId(req.params.id)) return res.status(404).json({ error: "Not found" });
+    const sub = await Submission.findByIdAndUpdate(
+      req.params.id,
+      { status: "approved", reviewedAt: new Date() },
+      { new: true }
+    );
+    if (!sub) return res.status(404).json({ error: "Not found" });
+    res.json({ status: "approved" });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+// PUT /api/submissions/:id/reject (admin)
+exports.rejectSubmission = async (req, res) => {
+  try {
+    if (!validId(req.params.id)) return res.status(404).json({ error: "Not found" });
+    const sub = await Submission.findByIdAndUpdate(
+      req.params.id,
+      { status: "rejected", reviewedAt: new Date() },
+      { new: true }
+    );
+    if (!sub) return res.status(404).json({ error: "Not found" });
+    res.json({ status: "rejected" });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+};

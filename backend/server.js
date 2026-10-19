@@ -1,21 +1,28 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const compression = require('compression');
 require('dotenv').config();
 const path = require('path');
 const uploadRoutes = require('./routes/uploadRoutes');
+
 const biographyRoutes = require('./routes/biographyRoutes');
 const articleRoutes = require('./routes/articleRoutes');
 const companyRoutes = require('./routes/companyRoutes');
 const brandRoutes = require('./routes/brandRoutes');
 const slidingCompanyRoutes = require('./routes/slidingcompanyRoutes');
 const latestArticleRoutes = require('./routes/latestarticleRoutes');
-
+const whatsappSettingsRoutes = require("./routes/whatsappSettings");
 const app = express();
+app.use((req, res, next) => {
+  console.log(req.method, req.url);
+  next();
+});
 const PORT = process.env.PORT || 5000;
 
 
 app.use(cors());
+app.use(compression());
 app.use(express.json({ limit: '10mb' }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -27,12 +34,14 @@ mongoose.connect(process.env.MONGO_URI)
 app.use('/api/blog-authors', require('./routes/blogAuthorRoutes'));
 app.use('/api/blog-articles', require('./routes/blogArticleRoutes'));
 app.use('/api/biographies', biographyRoutes);
+app.use("/api/submissions", require("./routes/submissions"));
 app.use('/api/articles', articleRoutes);
 app.use('/api/companies', companyRoutes);
 app.use('/api/brands', brandRoutes);
 app.use('/api/sliding-companies', slidingCompanyRoutes);
 app.use('/api/latest-articles', latestArticleRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use("/api/site-settings/whatsapp", whatsappSettingsRoutes);
 
 
 app.get('/', (req, res) => {
