@@ -10,7 +10,7 @@ const DEFAULT_SETTING = {
   message: "Hello! I need some assistance.",
 };
 
-// Public website: latest WhatsApp number fetch kare
+
 router.get("/", async (req, res) => {
   try {
     let setting = await WhatsAppSetting.findOne({ key: "global" });
@@ -31,7 +31,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Admin only: WhatsApp number update kare
+
 router.put("/", authMiddleware, async (req, res) => {
   try {
     const phoneNumber = String(req.body.phoneNumber || "")

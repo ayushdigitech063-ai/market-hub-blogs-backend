@@ -11,14 +11,14 @@ router.post("/", (req, res) => {
     if (err) {
       const msg =
         err.code === "LIMIT_FILE_SIZE"
-          ? "Image 5MB se chhoti honi chahiye."
-          : err.message || "Image upload nahi ho payi.";
+          ? "Image size is  must be small 5MB"
+          : err.message || "Image is  Not Uploaded";
 
       return res.status(400).json({ error: msg });
     }
 
     if (!req.file) {
-      return res.status(400).json({ error: "Image nahi mili." });
+      return res.status(400).json({ error: "Image is Not Found" });
     }
 
     return res.status(200).json({

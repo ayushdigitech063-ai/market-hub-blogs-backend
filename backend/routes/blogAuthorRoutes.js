@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const BlogAuthor = require('../models/BlogAuthor');
 
-// GET: saare authors
+
 router.get('/', async (req, res) => {
   try {
     const authors = await BlogAuthor.find().sort({ _id: 1 });
@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET: ek author id se
+
 router.get('/:id', async (req, res) => {
   try {
     const author = await BlogAuthor.findOne({ id: req.params.id });
@@ -23,7 +23,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST: author add karo
+
 router.post('/', async (req, res) => {
   try {
     const saved = Array.isArray(req.body)
@@ -35,7 +35,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT: author update karo
+
 router.put('/:id', async (req, res) => {
   try {
     const updated = await BlogAuthor.findOneAndUpdate(
@@ -50,7 +50,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// DELETE: author delete karo
+
 router.delete('/:id', async (req, res) => {
   try {
     const deleted = await BlogAuthor.findOneAndDelete({ id: req.params.id });

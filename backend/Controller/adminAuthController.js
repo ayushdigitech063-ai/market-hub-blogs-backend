@@ -24,14 +24,14 @@ exports.register = async (req, res) => {
     const { name, email, password, secretKey } = req.body;
 
     if (!name || !email || !password || !secretKey) {
-      return res.status(400).json({ error: "Saari fields bharna zaroori hai." });
+      return res.status(400).json({ error: "All fields are required." });
     }
 
     if (secretKey !== process.env.ADMIN_REGISTER_KEY) {
-      return res.status(403).json({ error: "Secret key galat hai." });
+      return res.status(403).json({ error: "The secret key is incorrect." });
     }
     if (password.length < 6) {
-      return res.status(400).json({ error: "Password kam se kam 6 akshar ka hona chahiye." });
+      return res.status(400).json({ error: "Password must be at least 6 characters long." });
     }
 
     const exists = await Admin.findOne({ email: email.toLowerCase().trim() });
@@ -43,7 +43,7 @@ exports.register = async (req, res) => {
     res.status(201).json({ token: makeToken(admin), admin: safeAdmin(admin) });
   } catch (err) {
     console.error("Register error:", err);
-    res.status(500).json({ error: "Server error. Dobara try karo." });
+    res.status(500).json({ error: "Server error. Please try again." });
   }
 };
 
@@ -52,19 +52,19 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return res.status(400).json({ error: "Email aur password dono daalo." });
+      return res.status(400).json({ error: "Please enter both email and password." });
     }
 
     const admin = await Admin.findOne({ email: email.toLowerCase().trim() });
-    if (!admin) return res.status(401).json({ error: "Email ya password galat hai." });
+    if (!admin) return res.status(401).json({ error: "Invalid email or password." });
 
     const ok = await bcrypt.compare(password, admin.password);
-    if (!ok) return res.status(401).json({ error: "Email ya password galat hai." });
+    if (!ok) return res.status(401).json({ error: "Invalid email or password." });
 
     res.json({ token: makeToken(admin), admin: safeAdmin(admin) });
   } catch (err) {
     console.error("Login error:", err);
-    res.status(500).json({ error: "Server error. Dobara try karo." });
+    res.status(500).json({ error: "Server error. Please try again." });
   }
 };
 

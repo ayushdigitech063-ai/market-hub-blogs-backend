@@ -7,7 +7,7 @@ const TYPES = [
   "articles", "blogArticles", "companies",
 ];
 
-// Public user ka HTML hai, isliye sanitize karke hi save hota hai (XSS se bachne ke liye)
+
 const CLEAN = {
   allowedTags: [
     "h1", "h2", "h3", "h4", "h5", "h6", "p", "br", "hr", "strong", "b", "em", "i", "u", "s",
@@ -38,7 +38,6 @@ const CLEAN = {
 
 const validId = (id) => mongoose.Types.ObjectId.isValid(id);
 
-// POST /api/submissions (public)
 exports.createSubmission = async (req, res) => {
   try {
     const { name, email, postType, form } = req.body || {};
@@ -76,7 +75,7 @@ exports.createSubmission = async (req, res) => {
   }
 };
 
-// GET /api/submissions/:id (public - sirf status)
+
 exports.getSubmissionStatus = async (req, res) => {
   try {
     if (!validId(req.params.id)) return res.status(404).json({ error: "Not found" });
@@ -88,7 +87,7 @@ exports.getSubmissionStatus = async (req, res) => {
   }
 };
 
-// GET /api/submissions?status=pending|approved|rejected (admin) - status na do to sab
+
 exports.listSubmissions = async (req, res) => {
   try {
     const filter = ["pending", "approved", "rejected"].includes(req.query.status)
@@ -100,7 +99,7 @@ exports.listSubmissions = async (req, res) => {
   }
 };
 
-// GET /api/submissions/count (admin) - sidebar badge ke liye
+
 exports.getPendingCount = async (req, res) => {
   try {
     res.json({ pending: await Submission.countDocuments({ status: "pending" }) });
@@ -108,9 +107,6 @@ exports.getPendingCount = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
-
-// PUT /api/submissions/:id/approve (admin)
-// Blog admin panel pehle hi sahi collection me save kar chuka hota hai, yaha sirf status badalta hai
 exports.approveSubmission = async (req, res) => {
   try {
     if (!validId(req.params.id)) return res.status(404).json({ error: "Not found" });
@@ -126,7 +122,7 @@ exports.approveSubmission = async (req, res) => {
   }
 };
 
-// PUT /api/submissions/:id/reject (admin)
+
 exports.rejectSubmission = async (req, res) => {
   try {
     if (!validId(req.params.id)) return res.status(404).json({ error: "Not found" });
