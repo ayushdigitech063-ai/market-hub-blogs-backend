@@ -5,7 +5,7 @@ const compression = require('compression');
 require('dotenv').config();
 const path = require('path');
 const uploadRoutes = require('./routes/uploadRoutes');
-
+const otpModule = require("./routes/otpMail");
 const biographyRoutes = require('./routes/biographyRoutes');
 const articleRoutes = require('./routes/articleRoutes');
 const companyRoutes = require('./routes/companyRoutes');
@@ -42,7 +42,7 @@ app.use('/api/sliding-companies', slidingCompanyRoutes);
 app.use('/api/latest-articles', latestArticleRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use("/api/site-settings/whatsapp", whatsappSettingsRoutes);
-
+app.use("/api/otp", otpModule.router);
 
 app.get('/', (req, res) => {
   res.json({ message: "Market Hub Blogs Backend is running successfully!" });
