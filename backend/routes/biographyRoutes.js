@@ -32,11 +32,11 @@ router.put('/update/:id', async (req, res) => {
     );
 
     if (!updatedPost) {
-      return res.status(404).json({ message: "Yeh post nahi mili!" });
+      return res.status(404).json({ message: "Post not found." });
     }
 
     res.status(200).json({
-      message: "Post successfully update ho gayi!",
+      message: "Post updated successfully.",
       updatedPost
     });
   } catch (err) {
@@ -50,10 +50,10 @@ router.delete('/delete/:id', async (req, res) => {
     const deletedPost = await Biography.findByIdAndDelete(req.params.id);
 
     if (!deletedPost) {
-      return res.status(404).json({ message: "Yeh post nahi mili!" });
+      return res.status(404).json({ message: "Post not found." });
     }
 
-    res.status(200).json({ message: "Post successfully delete ho gayi!" });
+    res.status(200).json({ message: "Post deleted successfully." });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
