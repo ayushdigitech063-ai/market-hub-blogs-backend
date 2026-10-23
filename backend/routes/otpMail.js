@@ -1,3 +1,4 @@
+
 const express = require("express");
 const crypto = require("crypto");
 
@@ -199,9 +200,8 @@ Do not share this code with anyone.`,
     // Asli error backend terminal mein dikhega.
     console.error("OTP email error:", err.message);
 
-    // TEMP (debug): asli reason screen par dikhane ke liye. Sab theek hone ke baad hata dena.
     return res.status(500).json({
-      error: `Could not send OTP. (${err.message})`,
+      error: "Could not send OTP. Check the backend terminal for the mail error.",
     });
   }
 });
