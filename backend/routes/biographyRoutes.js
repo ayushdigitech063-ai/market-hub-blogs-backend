@@ -1,4 +1,3 @@
-
 const express = require("express");
 const router = express.Router();
 const Biography = require("../models/Biography");
@@ -128,6 +127,7 @@ const buildHomepage = async () => {
       twitter: 1,
       instagram: 1,
       website: 1,
+      createdAt: 1,
     }
   )
     .sort({ _id: -1 })
@@ -163,6 +163,7 @@ const buildHomepage = async () => {
       twitter: item.twitter,
       instagram: item.instagram,
       website: item.website,
+      createdAt: item.createdAt,
     });
   }
 

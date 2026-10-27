@@ -4,7 +4,7 @@ const nodemailer = require("nodemailer");
 const Submission = require("../models/Submission");
 const Admin = require("../models/Admin");
 
-// Mail bhejne wala Gmail account (sirf yahi 2 cheezein badalni hain)
+
 const MAIL_USER = "yourgmail@gmail.com";
 const MAIL_PASS = "your16letterapppassword";
 
@@ -49,8 +49,7 @@ const esc = (s) =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
   );
 
-// Naya blog aane par jo admin(s) Admin collection me hain unke mail pe details bhejta hai.
-// Mail fail ho jaye to bhi blog submit par koi asar nahi padta.
+
 const sendAdminMail = async (sub) => {
   try {
     const admins = await Admin.find().select("email");

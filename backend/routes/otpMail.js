@@ -269,7 +269,7 @@ router.post("/submitted", (req, res) => {
   );
 });
 
-// POST /api/otp/decision  (admin Allow / Reject ke baad user ko mail)
+
 router.post("/decision", async (req, res) => {
   try {
     const Submission = require("../models/Submission");
