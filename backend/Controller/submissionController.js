@@ -3,6 +3,7 @@ const sanitizeHtml = require("sanitize-html");
 const nodemailer = require("nodemailer");
 const Submission = require("../models/Submission");
 const Admin = require("../models/Admin");
+const uploadBase64Images = require("../utils/uploadBase64Images");
 
 
 const MAIL_USER = "yourgmail@gmail.com";
@@ -97,6 +98,12 @@ exports.createSubmission = async (req, res) => {
     const clean = { ...form };
     clean.title = String(clean.title || "").trim();
     clean.category = String(clean.category || "").trim();
+    try {
+      clean.contentHtml = await uploadBase64Images(clean.contentHtml);
+    } catch (imgErr) {
+      console.error("Base64 image upload failed:", imgErr.message);
+      return res.status(400).json({ error: "Image upload failed. Please try a smaller image." });
+    }
     clean.contentHtml = sanitizeHtml(String(clean.contentHtml || ""), CLEAN);
 
     if (!clean.title || !clean.category || !clean.contentHtml.trim()) {

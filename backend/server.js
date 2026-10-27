@@ -40,7 +40,7 @@ app.use(cors());
 app.use(compression());
 
 // Parse JSON request bodies.
-app.use(express.json({ limit: "10mb" }));
+app.use(express.json({ limit: "50mb" }));
 
 // Serve uploaded files.
 app.use(
