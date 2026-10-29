@@ -1,10 +1,9 @@
 const cloudinary = require("../config/cloudinary");
 
-// <img src="data:image/...;base64,..."> ko pakadta hai
+
 const DATA_IMG =
   /(<img\b[^>]*?\bsrc=["'])(data:image\/(?:png|jpe?g|webp|gif);base64,[A-Za-z0-9+/=\s]+)(["'])/gi;
 
-// HTML ke andar jo base64 images hain unhe Cloudinary pe upload karke URL se replace karta hai
 const uploadBase64Images = async (html) => {
   const text = String(html || "");
   const matches = [...text.matchAll(DATA_IMG)];

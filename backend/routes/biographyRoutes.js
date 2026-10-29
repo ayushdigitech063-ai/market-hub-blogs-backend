@@ -111,8 +111,6 @@ const buildHomepage = async () => {
   const sections = emptySections();
   const seen = new Set();
 
-  // Fetch lightweight metadata only; do not fetch large image/description
-  // fields while identifying the correct records for each section.
   const candidates = await Biography.find(
     {},
     {
@@ -167,7 +165,7 @@ const buildHomepage = async () => {
     });
   }
 
-  // Fetch images only for the 12 selected homepage cards.
+
   const selectedIds = Object.values(sections)
     .flat()
     .map((item) => item._id);
@@ -193,7 +191,7 @@ const buildHomepage = async () => {
   return Object.values(sections).flat();
 };
 
-// Lightweight homepage API.
+
 router.get("/homepage", async (req, res) => {
   try {
     res.set("Cache-Control", "public, max-age=30");
@@ -205,7 +203,6 @@ router.get("/homepage", async (req, res) => {
       return res.status(200).json(homepageCache);
     }
 
-    // Avoid duplicate database work when requests arrive together.
     if (!homepageCachePromise) {
       homepageCachePromise = buildHomepage();
     }
@@ -228,7 +225,6 @@ router.get("/homepage", async (req, res) => {
   }
 });
 
-// Existing API: return all biographies.
 router.get("/", async (req, res) => {
   try {
     const bios = await Biography.find().lean();
@@ -239,7 +235,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Existing API: add biography.
+
 router.post("/add", async (req, res) => {
   try {
     const newBio = new Biography(req.body);
@@ -254,7 +250,7 @@ router.post("/add", async (req, res) => {
   }
 });
 
-// Existing API: update biography.
+
 router.put("/update/:id", async (req, res) => {
   try {
     const updatedPost = await Biography.findByIdAndUpdate(
@@ -281,7 +277,7 @@ router.put("/update/:id", async (req, res) => {
   }
 });
 
-// Existing API: delete biography.
+
 router.delete("/delete/:id", async (req, res) => {
   try {
     const deletedPost = await Biography.findByIdAndDelete(

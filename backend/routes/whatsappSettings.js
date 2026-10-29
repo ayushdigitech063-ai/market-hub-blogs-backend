@@ -45,7 +45,7 @@ router.put("/", authMiddleware, async (req, res) => {
     if (!/^\d{10,15}$/.test(phoneNumber)) {
       return res.status(400).json({
         message:
-          "Enter a valid WhatsApp number with country code, using 10–15 digits.",
+          "Enter a valid WhatsApp number with country code, using 10 digits.",
       });
     }
 

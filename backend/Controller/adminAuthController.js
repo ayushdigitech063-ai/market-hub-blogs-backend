@@ -35,7 +35,7 @@ exports.register = async (req, res) => {
     }
 
     const exists = await Admin.findOne({ email: email.toLowerCase().trim() });
-    if (exists) return res.status(409).json({ error: "Is email se admin pehle se bana hua hai." });
+    if (exists) return res.status(409).json({ error: "An admin with this email already exists."});
 
     const hashed = await bcrypt.hash(password, 10);
     const admin = await Admin.create({ name, email, password: hashed });
@@ -56,10 +56,10 @@ exports.login = async (req, res) => {
     }
 
     const admin = await Admin.findOne({ email: email.toLowerCase().trim() });
-    if (!admin) return res.status(401).json({ error: "Invalid email or password." });
+    if (!admin) return res.status(401).json({ error: "Invalid email" });
 
     const ok = await bcrypt.compare(password, admin.password);
-    if (!ok) return res.status(401).json({ error: "Invalid email or password." });
+    if (!ok) return res.status(401).json({ error: "Invalid password." });
 
     res.json({ token: makeToken(admin), admin: safeAdmin(admin) });
   } catch (err) {

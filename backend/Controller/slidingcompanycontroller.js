@@ -23,7 +23,7 @@ exports.create = async (req, res) => {
   try {
     res.status(201).json(await SlidingCompany.create(req.body));
   } catch (e) {
-    res.status(400).json({ error: e.code === 11000 ? "Ye slug pehle se hai!" : e.message });
+    res.status(400).json({ error: e.code === 11000 ? "This slug already exists!": e.message });
   }
 };
 
