@@ -1,51 +1,74 @@
-const express = require('express');
+
+const express = require("express");
 const router = express.Router();
-const Company = require('../models/Company');
 
+const protect = require("../middleware/authMiddleware");
+const Company = require("../models/Company");
 
-router.get('/', async (req, res) => {
+// GET /api/companies
+// Fetch all companies
+router.get("/", async (req, res) => {
   try {
-    const companies = await Company.find();
-    res.json(companies);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const companies = await Company.find().sort({ name: 1 });
+    res.status(200).json(companies);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch companies." });
   }
 });
 
-
-router.post('/', async (req, res) => {
+// POST /api/companies
+// Create a new company
+router.post("/", protect, async (req, res) => {
   try {
-    const newCompany = new Company(req.body);
-    const savedCompany = await newCompany.save();
-    res.status(201).json(savedCompany);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const company = await Company.create(req.body);
+    res.status(201).json(company);
+  } catch (error) {
+    res.status(400).json({ message: "Failed to create company." });
   }
 });
 
-
-router.put('/:slug', async (req, res) => {
+// PUT /api/companies/:slug
+// Update company
+router.put("/:slug", protect, async (req, res) => {
   try {
-    const updated = await Company.findOneAndUpdate(
+    const data = { ...req.body };
+
+    delete data._id;
+    delete data.__v;
+    delete data.createdAt;
+    delete data.updatedAt;
+
+    const company = await Company.findOneAndUpdate(
       { slug: req.params.slug },
-      { $set: req.body },
+      { $set: data },
       { new: true, runValidators: true }
     );
-    if (!updated) return res.status(404).json({ error: 'Company not found' });
-    res.json(updated);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+
+    if (!company) {
+      return res.status(404).json({ message: "Company not found." });
+    }
+
+    res.status(200).json(company);
+  } catch (error) {
+    res.status(400).json({ message: "Failed to update company." });
   }
 });
 
-
-router.delete('/:slug', async (req, res) => {
+// DELETE /api/companies/:slug
+// Delete company
+router.delete("/:slug", protect, async (req, res) => {
   try {
-    const deleted = await Company.findOneAndDelete({ slug: req.params.slug });
-    if (!deleted) return res.status(404).json({ error: 'Company not found' });
-    res.json({ message: 'Company deleted', slug: deleted.slug });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const company = await Company.findOneAndDelete({
+      slug: req.params.slug,
+    });
+
+    if (!company) {
+      return res.status(404).json({ message: "Company not found." });
+    }
+
+    res.status(200).json({ message: "Company deleted successfully." });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to delete company." });
   }
 });
 

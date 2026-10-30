@@ -1,79 +1,116 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Article = require('../models/Article');
 
+const Article = require("../models/Article");
+const protect = require("../middleware/authMiddleware");
 
-router.get('/', async (req, res) => {
+// GET /api/articles
+// Saare articles
+router.get("/", async (req, res) => {
   try {
     const articles = await Article.find().sort({ id: 1 });
-    res.json(articles);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(200).json(articles);
+  } catch (error) {
+    res.status(500).json({ message: "Articles could not be fetched." });
   }
 });
 
-
-router.get('/:id', async (req, res) => {
+// GET /api/articles/:id
+// Numeric ID se article
+router.get("/:id", async (req, res) => {
   try {
-    const article = await Article.findOne({ id: Number(req.params.id) });
-    if (!article) return res.status(404).json({ error: 'Article not found' });
-    res.json(article);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+    const id = Number(req.params.id);
 
+    if (!Number.isSafeInteger(id)) {
+      return res.status(400).json({ message: "Invalid article ID." });
+    }
 
-router.post('/', async (req, res) => {
-  try {
-    const saved = Array.isArray(req.body)
-      ? await Article.insertMany(req.body)
-      : await new Article(req.body).save();
-    res.status(201).json(saved);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+    const article = await Article.findOne({ id });
 
-
-router.put('/:id', async (req, res) => {
-  try {
-    const updated = await Article.findOneAndUpdate(
-      { id: Number(req.params.id) },
-      { $set: req.body },
-      { new: true, strict: false }
-    );
-    if (!updated) return res.status(404).json({ error: 'Article not found' });
-    res.json(updated);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-router.get('/:id', async (req, res) => {
-  try {
-    const query = req.params.id;
-    let article = await Article.findOne({ slug: query });
     if (!article) {
-      article = await Article.findOne({ id: isNaN(query) ? query : Number(query) });
+      return res.status(404).json({ message: "Failed to fetch articles." });
     }
-    if (!article && query.match(/^[0-9a-fA-F]{24}$/)) {
-      article = await Article.findById(query);
-    }
-    if (!article) return res.status(404).json({ message: 'Article not found' });
-    res.json(article);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+
+    res.status(200).json(article);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch articles." });
   }
 });
 
-router.delete('/:id', async (req, res) => {
+// POST /api/articles
+// Ek article ya articles ki array create karna
+router.post("/", protect, async (req, res) => {
   try {
-    const deleted = await Article.findOneAndDelete({ id: Number(req.params.id) });
-    if (!deleted) return res.status(404).json({ error: 'Article not found' });
-    res.json({ message: 'Article deleted', id: deleted.id });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const data = req.body;
+
+    if (Array.isArray(data)) {
+      if (!data.length) {
+        return res.status(400).json({ message: "The article list is empty." });
+      }
+
+      const articles = await Article.insertMany(data);
+      return res.status(201).json(articles);
+    }
+
+    const article = await Article.create(data);
+    res.status(201).json(article);
+  } catch (error) {
+    res.status(400).json({ message: "Article could not be created." });
+  }
+});
+
+// PUT /api/articles/:id
+// Article update karna
+router.put("/:id", protect, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+
+    if (!Number.isSafeInteger(id)) {
+      return res.status(400).json({ message: "Invalid article ID." });
+    }
+
+    const data = { ...req.body };
+
+    delete data._id;
+    delete data.__v;
+    delete data.createdAt;
+    delete data.updatedAt;
+
+    const article = await Article.findOneAndUpdate(
+      { id },
+      { $set: data },
+      { new: true, runValidators: true }
+    );
+
+    if (!article) {
+      return res.status(404).json({ message: "Article not found." });
+    }
+
+    res.status(200).json(article);
+  } catch (error) {
+    res.status(400).json({ message: "Article could not be updated." });
+  }
+});
+
+// DELETE /api/articles/:id
+// Article delete karna
+router.delete("/:id", protect, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+
+    if (!Number.isSafeInteger(id)) {
+      return res.status(400).json({ message: "Invalid article ID." });
+    }
+
+    const article = await Article.findOneAndDelete({ id });
+
+    if (!article) {
+      return res.status(404).json({ message: "Article did  Not Found" });
+    }
+
+    res.status(200).json({ message: "Article deleted successfully." });
+  } catch (error) {
+    res.status(500).json({ message: "Article could not be deleted." });
   }
 });
 

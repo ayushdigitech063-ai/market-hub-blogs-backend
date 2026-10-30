@@ -1,30 +1,23 @@
 
-
 const express = require("express");
 const router = express.Router();
+
 const protect = require("../middleware/authMiddleware");
 const upload = require("../middleware/upload");
 
-
-router.post("/", (req, res) => {
-  upload.single("image")(req, res, (err) => {
-    if (err) {
-      const msg =
-        err.code === "LIMIT_FILE_SIZE"
-          ? "Image size is  must be small 5MB"
-          : err.message || "Image is  Not Uploaded";
-
-      return res.status(400).json({ error: msg });
-    }
-
-    if (!req.file) {
-      return res.status(400).json({ error: "Image is Not Found" });
-    }
-
-    return res.status(200).json({
-      url: req.file.path,
-      public_id: req.file.filename,
+// POST /api/upload
+// Allow admins to upload images
+router.post("/", protect, upload.single("image"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({
+      message: "Please select an image.",
     });
+  }
+
+  return res.status(201).json({
+    message: "Image uploaded successfully.",
+    url: req.file.path,
+    filename: req.file.filename,
   });
 });
 

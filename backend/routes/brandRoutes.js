@@ -1,17 +1,29 @@
-
-
 const express = require("express");
 const router = express.Router();
-const c = require("../Controller/brandcontroller");
+const brandController = require("../Controller/brandcontroller");
 const protect = require("../middleware/authMiddleware");
 
-router.get("/featured", c.getFeatured);
-router.get("/", c.getAll);
-router.get("/:slug", c.getBySlug);
 
+// PUBLIC ROUTES
 
-router.post("/", protect, c.create);
-router.put("/:slug", protect, c.update);
-router.delete("/:slug", protect, c.remove);
+// GET /api/brands/featured
+router.get("/featured", brandController.getFeatured);
+
+// GET /api/brands
+router.get("/", brandController.getAll);
+
+// GET /api/brands/:slug
+router.get("/:slug", brandController.getBySlug);
+
+// ADMIN ROUTES — login required
+
+// POST /api/brands
+router.post("/", protect, brandController.create);
+
+// PUT /api/brands/:slug
+router.put("/:slug", protect, brandController.update);
+
+// DELETE /api/brands/:slug
+router.delete("/:slug", protect, brandController.remove);
 
 module.exports = router;

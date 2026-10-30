@@ -1,63 +1,89 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const BlogAuthor = require('../models/BlogAuthor');
 
+const protect = require("../middleware/authMiddleware");
+const BlogAuthor = require("../models/BlogAuthor");
 
-router.get('/', async (req, res) => {
+// GET /api/blog-authors
+// Saare authors
+router.get("/", async (req, res) => {
   try {
-    const authors = await BlogAuthor.find().sort({ _id: 1 });
-    res.json(authors);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const authors = await BlogAuthor.find().sort({ name: 1 });
+    res.status(200).json(authors);
+  } catch (error) {
+    res.status(500).json({ message: "Authors is not Featch " });
   }
 });
 
-
-router.get('/:id', async (req, res) => {
+// GET /api/blog-authors/:id
+// Custom author ID se author
+router.get("/:id", async (req, res) => {
   try {
     const author = await BlogAuthor.findOne({ id: req.params.id });
-    if (!author) return res.status(404).json({ error: 'Author not found' });
-    res.json(author);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+
+    if (!author) {
+      return res.status(404).json({ message: "Author did not Found" });
+    }
+
+    res.status(200).json(author);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch authors." });
   }
 });
 
-
-router.post('/', async (req, res) => {
+// POST /api/blog-authors
+// Naya author
+router.post("/", protect, async (req, res) => {
   try {
-    const saved = Array.isArray(req.body)
-      ? await BlogAuthor.insertMany(req.body)
-      : await new BlogAuthor(req.body).save();
-    res.status(201).json(saved);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const author = await BlogAuthor.create(req.body);
+    res.status(201).json(author);
+  } catch (error) {
+    res.status(400).json({ message: "Author could not be created." });
   }
 });
 
-
-router.put('/:id', async (req, res) => {
+// PUT /api/blog-authors/:id
+// Author update
+router.put("/:id", protect, async (req, res) => {
   try {
-    const updated = await BlogAuthor.findOneAndUpdate(
+    const data = { ...req.body };
+
+    delete data._id;
+    delete data.__v;
+    delete data.createdAt;
+    delete data.updatedAt;
+
+    const author = await BlogAuthor.findOneAndUpdate(
       { id: req.params.id },
-      { $set: req.body },
-      { new: true, strict: false }
+      { $set: data },
+      { new: true, runValidators: true }
     );
-    if (!updated) return res.status(404).json({ error: 'Author not found' });
-    res.json(updated);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+
+    if (!author) {
+      return res.status(404).json({ message: "Author did not found" });
+    }
+
+    res.status(200).json(author);
+  } catch (error) {
+    res.status(400).json({ message: "Author is not update" });
   }
 });
 
-
-router.delete('/:id', async (req, res) => {
+// DELETE /api/blog-authors/:id
+// Author delete
+router.delete("/:id", protect, async (req, res) => {
   try {
-    const deleted = await BlogAuthor.findOneAndDelete({ id: req.params.id });
-    if (!deleted) return res.status(404).json({ error: 'Author not found' });
-    res.json({ message: 'Author deleted', id: deleted.id });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const author = await BlogAuthor.findOneAndDelete({
+      id: req.params.id,
+    });
+
+    if (!author) {
+      return res.status(404).json({ message: "Author did not found" });
+    }
+
+    res.status(200).json({ message: "Author is sucessfully Delete" });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to Author delete " });
   }
 });
 

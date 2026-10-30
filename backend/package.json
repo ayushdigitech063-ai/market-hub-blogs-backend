@@ -27,7 +27,8 @@
     "multer-storage-cloudinary": "^4.0.0",
     "nodemailer": "^10.2.0",
     "nodemon": "^3.1.14",
-    "sanitize-html": "^2.18.1"
+    "sanitize-html": "^2.18.1",
+    "sweetalert2": "^11.26.25"
   },
   "devDependencies": {
     "esbuild": "^0.28.2"

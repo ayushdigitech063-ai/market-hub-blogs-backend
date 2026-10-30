@@ -1,3 +1,4 @@
+
 const multer = require("multer");
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const cloudinary = require("../config/cloudinary");
@@ -8,7 +9,7 @@ const storage = new CloudinaryStorage({
     const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
     if (!allowedTypes.includes(file.mimetype)) {
-      throw new Error("Sirf JPG, PNG, WEBP ya GIF image allowed hai.");
+      throw new Error("Only JPG, PNG, WEBP, or GIF images are allowed.");
     }
 
     return {
@@ -26,7 +27,7 @@ const fileFilter = (req, file, cb) => {
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error("Sirf JPG, PNG, WEBP ya GIF image allowed hai."));
+    cb(new Error("Only JPG, PNG, WEBP, or GIF images are allowed."));
   }
 };
 
